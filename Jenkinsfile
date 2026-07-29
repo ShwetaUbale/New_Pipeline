@@ -1,37 +1,37 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.12'
+        }
+    }
 
     stages {
-        stage('Clone Code') {
-            steps {
-                git branch: 'main',
-                    url: 'https://github.com/ShwetaUbale/New_Pipeline.git'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
-                sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install -r requirements.txt
-                '''
+                sh 'pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh '''
-                    . venv/bin/activate
-                    pytest
-                '''
+                sh 'pytest'
             }
         }
 
-        stage('Build Completed') {
+        stage('Build Complete') {
             steps {
-                echo 'Application Build Successfully'
+                echo 'Application Build Successful'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'Pipeline failed.'
         }
     }
 }
